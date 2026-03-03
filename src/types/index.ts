@@ -1,4 +1,14 @@
-export type Theme = 'default' | 'football' | 'baby' | 'money';
+export type Theme =
+  | "default"
+  | "football"
+  | "baby"
+  | "money"
+  | "party"
+  | "wedding"
+  | "birthday"
+  | "carnival"
+  | "christmas"
+  | "beach";
 
 export interface Raffle {
   id: string;
@@ -17,7 +27,10 @@ export interface UserState {
 }
 
 export type RaffleAction =
-  | { type: 'CREATE_RAFFLE'; payload: Raffle }
-  | { type: 'DELETE_RAFFLE'; payload: string }
-  | { type: 'EDIT_RAFFLE'; payload: Raffle }
-  | { type: 'BUY_TICKET'; payload: { raffleId: string; ticketNumber: number } };
+  | { type: "CREATE_RAFFLE"; payload: Raffle }
+  | { type: "DELETE_RAFFLE"; payload: string }
+  | { type: "EDIT_RAFFLE"; payload: Raffle }
+  | {
+      type: "BUY_TICKET";
+      payload: { raffleId: string; ticketNumbers: number[] };
+    };

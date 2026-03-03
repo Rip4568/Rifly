@@ -1,0 +1,25 @@
+
+> app@0.1.0 build
+> next build
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+
+  Creating an optimized production build ...
+Ô£ô Compiled successfully in 2.8s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/8) ...
+Ô¿» useSearchParams() should be wrapped in a suspense boundary at page "/success". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+    at Q (C:\Users\user\Desktop\work\code\Rifly\.next\server\chunks\ssr\node_modules_next_920e7746._.js:2:2111)
+    at o (C:\Users\user\Desktop\work\code\Rifly\.next\server\chunks\ssr\node_modules_next_920e7746._.js:4:5284)
+    at m (C:\Users\user\Desktop\work\code\Rifly\.next\server\chunks\ssr\[root-of-the-server]__4ea7a0bc._.js:1:8708)
+    at an (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:84360)
+    at ai (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:86179)
+    at al (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:107953)
+    at as (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:105368)
+    at aa (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:84712)
+    at ai (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:86228)
+    at ai (C:\Users\user\Desktop\work\code\Rifly\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.prod.js:2:104708)
+Error occurred prerendering page "/success". Read more: https://nextjs.org/docs/messages/prerender-error
+Export encountered an error on /success/page: /success, exiting the build.
+Ô¿» Next.js build worker exited with code: 1 and signal: null

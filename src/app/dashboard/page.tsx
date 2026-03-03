@@ -3,8 +3,15 @@
 import Link from "next/link";
 import { useRaffle } from "@/context/RaffleContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Ticket, Wallet } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Plus, Trash2, Ticket, Wallet, ArrowLeft } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -35,98 +42,213 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 space-y-8">
-      <header className="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="container mx-auto p-4 md:p-8 space-y-10 animate-in fade-in zoom-in-95 duration-500 relative min-h-[80vh]">
+      {/* Background Glows */}
+      <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-10 left-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Meus Sorteios</h1>
-          <p className="text-muted-foreground">Gerencie suas rifas e acompanhe seus ganhos.</p>
+          <div className="flex items-center gap-2 mb-2">
+            <Link href="/">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <h1 className="text-3xl font-bold tracking-tight">Meus Sorteios</h1>
+          </div>
+          <p className="text-muted-foreground ml-10">
+            Gerencie suas rifas e acompanhe seus ganhos.
+          </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Card className="p-4 flex items-center gap-3 shadow-none border bg-secondary/20">
-             <div className="bg-green-100 p-2 rounded-full">
-                <Wallet className="h-5 w-5 text-green-600" />
-             </div>
-             <div>
-                <p className="text-xs font-medium text-muted-foreground">Saldo Disponível</p>
-                <p className="text-lg font-bold text-green-700">R$ {state.balance.toFixed(2)}</p>
-             </div>
-          </Card>
-          <Link href="/create">
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 w-full md:w-auto">
+          {/* Super Premium Balance Card */}
+          <div className="relative group shrink-0">
+            {/* Glowing aura under the card */}
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/30 via-emerald-500/20 to-teal-500/10 rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none" />
+
+            <Card className="relative flex items-center justify-between sm:justify-start gap-4 p-4 pr-6 rounded-2xl border-white/10 bg-black/60 backdrop-blur-2xl shadow-2xl overflow-hidden transition-transform duration-300 group-hover:-translate-y-1">
+              {/* Top highlight strict line */}
+              <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-green-500/60 to-transparent opacity-50" />
+
+              {/* Ambient light inside the card */}
+              <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-green-500/20 rounded-full blur-[40px] pointer-events-none" />
+
+              <div className="relative bg-gradient-to-br from-green-400/20 to-emerald-900/40 p-3 rounded-full border border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                <Wallet className="h-6 w-6 text-green-400 drop-shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+              </div>
+              <div className="relative flex flex-col items-end sm:items-start">
+                <p className="text-[10px] font-black text-muted-foreground/80 uppercase tracking-widest mb-0.5">
+                  Saldo Disponível
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-sm font-bold text-green-500/70">
+                    R$
+                  </span>
+                  <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-green-100 to-green-500 tracking-tighter drop-shadow-sm">
+                    {state.balance.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <Link href="/create" className="w-full sm:w-auto mt-2 sm:mt-0">
+            <Button className="w-full h-14 sm:h-[68px] px-6 gap-2 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(139,92,246,0.3)] transition-all hover:scale-105 active:scale-95">
+              <Plus className="h-5 w-5" />
               Nova Rifa
             </Button>
           </Link>
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative z-10">
         {state.raffles.length === 0 ? (
-          <div className="col-span-full flex flex-col items-center justify-center py-16 border-2 border-dashed rounded-lg bg-muted/10">
-            <Ticket className="h-12 w-12 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-medium">Nenhuma rifa criada</h3>
-            <p className="text-muted-foreground mb-6 text-center max-w-sm">Comece criando sua primeira rifa para compartilhar com seus amigos e arrecadar fundos.</p>
+          <div className="col-span-full flex flex-col items-center justify-center py-20 px-4 border border-dashed border-white/10 rounded-2xl bg-black/20 backdrop-blur-sm">
+            <div className="p-4 rounded-full bg-primary/10 mb-4 animate-bounce">
+              <Ticket className="h-10 w-10 text-primary" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">Nenhuma rifa criada</h3>
+            <p className="text-muted-foreground mb-8 text-center max-w-sm">
+              Comece criando sua primeira ação agora mesmo. Financie seus
+              projetos engajando seus contatos.
+            </p>
             <Link href="/create">
-              <Button variant="outline">Criar Rifa Agora</Button>
+              <Button
+                variant="outline"
+                className="border-primary/50 text-foreground hover:bg-primary/20 hover:text-primary"
+              >
+                Começar
+              </Button>
             </Link>
           </div>
         ) : (
-          state.raffles.map((raffle) => (
-            <Card key={raffle.id} className="flex flex-col group hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl truncate pr-2">{raffle.title}</CardTitle>
-                    <span className="text-xs px-2 py-1 rounded bg-secondary font-medium uppercase tracking-wide">
-                        {raffle.theme}
-                    </span>
+          state.raffles.map((raffle, index) => (
+            <Card
+              key={raffle.id}
+              className="flex flex-col group relative overflow-hidden bg-card/40 backdrop-blur-xl border-white/5 shadow-xl hover:shadow-[0_8px_30px_rgba(139,92,246,0.15)] transition-all duration-300 hover:-translate-y-1"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              {/* Highlight Gradient on Hover */}
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start gap-4">
+                  <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors">
+                    {raffle.title}
+                  </CardTitle>
+                  <span className="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 font-bold uppercase tracking-wider text-muted-foreground group-hover:bg-primary/20 group-hover:text-primary group-hover:border-primary/30 transition-all">
+                    {raffle.theme}
+                  </span>
                 </div>
-                <CardDescription className="line-clamp-2 min-h-[40px]">{raffle.description}</CardDescription>
+                <CardDescription className="line-clamp-2 min-h-[40px] text-sm mt-3">
+                  {raffle.description ||
+                    "Nenhuma descrição fornecida para esta rifa."}
+                </CardDescription>
               </CardHeader>
-              <CardContent className="flex-1 space-y-4">
-                 <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="text-muted-foreground">Preço</p>
-                        <p className="font-semibold">R$ {raffle.ticketPrice.toFixed(2)}</p>
-                    </div>
-                    <div>
-                        <p className="text-muted-foreground">Vendidos</p>
-                        <p className="font-semibold">{raffle.soldTickets.length} / {raffle.totalTickets}</p>
-                    </div>
-                 </div>
-                 <div className="w-full bg-secondary h-2 rounded-full overflow-hidden">
+              <CardContent className="flex-1 space-y-6">
+                <div className="grid grid-cols-2 gap-4 text-sm bg-black/20 p-3 rounded-lg border border-white/5">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground mb-1">
+                      Cota
+                    </span>
+                    <span className="font-bold text-foreground">
+                      R$ {raffle.ticketPrice.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs text-muted-foreground mb-1">
+                      Vendidos
+                    </span>
+                    <span className="font-bold text-foreground">
+                      <span className="text-primary">
+                        {raffle.soldTickets.length}
+                      </span>{" "}
+                      / {raffle.totalTickets}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs font-medium">
+                    <span className="text-muted-foreground">Progresso</span>
+                    <span className="text-primary">
+                      {Math.round(
+                        (raffle.soldTickets.length / raffle.totalTickets) * 100,
+                      )}
+                      %
+                    </span>
+                  </div>
+                  <div className="w-full bg-secondary/30 h-1.5 rounded-full overflow-hidden shadow-inner">
                     <div
-                        className="bg-primary h-full transition-all duration-500"
-                        style={{ width: `${(raffle.soldTickets.length / raffle.totalTickets) * 100}%` }}
-                    />
-                 </div>
+                      className="bg-gradient-to-r from-primary/50 to-primary h-full rounded-full transition-all duration-1000 ease-out relative"
+                      style={{
+                        width: `${Math.max(2, (raffle.soldTickets.length / raffle.totalTickets) * 100)}%`,
+                      }}
+                    >
+                      <div className="absolute inset-0 bg-white/20 w-full h-full animate-[shimmer_2s_infinite]" />
+                    </div>
+                  </div>
+                </div>
               </CardContent>
-              <CardFooter className="flex justify-between gap-2 border-t pt-4 bg-muted/5">
+              <CardFooter className="flex justify-between gap-3 border-t border-white/5 pt-5 bg-black/10">
                 <Link href={`/raffle/${raffle.id}`} className="flex-1">
-                   <Button variant="outline" className="w-full">Ver Rifa</Button>
+                  <Button
+                    variant="outline"
+                    className="w-full bg-transparent border-white/10 hover:bg-white/5 hover:border-white/20 transition-all font-semibold"
+                  >
+                    Gerenciar Ação
+                  </Button>
                 </Link>
 
                 {/* Delete Dialog */}
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-muted-foreground hover:text-destructive"
-                        onClick={() => setDeleteId(raffle.id)}
+                      variant="outline"
+                      size="icon"
+                      className="shrink-0 bg-transparent border-white/10 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30 transition-all"
+                      onClick={() => setDeleteId(raffle.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Excluir Rifa?</DialogTitle>
-                      <DialogDescription>
-                        Esta ação não pode ser desfeita. Isso excluirá permanentemente a rifa &quot;{raffle.title}&quot; e todos os dados associados.
+                  <DialogContent className="sm:max-w-[425px] border-red-500/20 bg-background/95 backdrop-blur-xl">
+                    <DialogHeader className="pt-4">
+                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 mb-4">
+                        <Trash2 className="h-8 w-8 text-red-500" />
+                      </div>
+                      <DialogTitle className="text-center text-2xl font-bold">
+                        Excluir Rifa
+                      </DialogTitle>
+                      <DialogDescription className="text-center pt-2 text-base">
+                        Isso removerá{" "}
+                        <span className="text-foreground font-bold">
+                          &quot;{raffle.title}&quot;
+                        </span>{" "}
+                        para sempre. Todos os bilhetes vendidos e simulações
+                        serão perdidos.
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setDeleteId(null)}>Cancelar</Button>
-                      <Button variant="destructive" onClick={handleDelete}>Excluir</Button>
+                    <DialogFooter className="sm:justify-center gap-2 pt-6">
+                      <Button
+                        variant="ghost"
+                        className="hover:bg-white/5"
+                        onClick={() => setDeleteId(null)}
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="bg-red-500 hover:bg-red-600 font-bold"
+                        onClick={handleDelete}
+                      >
+                        Sim, Excluir Agora
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
