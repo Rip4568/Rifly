@@ -59,7 +59,6 @@ const raffleReducer = (state: UserState, action: RaffleAction): UserState => {
 
 interface RaffleContextType {
   state: UserState;
-  dispatch: React.Dispatch<RaffleAction>;
   createRaffle: (
     raffle: Omit<Raffle, "id" | "createdAt" | "soldTickets">,
   ) => void;
@@ -121,7 +120,6 @@ export const RaffleProvider = ({ children }: { children: ReactNode }) => {
     <RaffleContext.Provider
       value={{
         state,
-        dispatch,
         createRaffle,
         deleteRaffle,
         editRaffle,

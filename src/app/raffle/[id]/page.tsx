@@ -2,7 +2,7 @@
 
 import { useRaffle } from "@/context/RaffleContext";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,17 +19,11 @@ import {
   Loader2,
   Check,
   Share2,
-  Trophy,
-  Sparkles,
-  HeartHandshake,
-  Banknote,
-  PartyPopper,
-  Gem,
-  Cake,
-  Music,
-  Gift,
-  Palmtree,
+  Zap,
+  X,
+  Shuffle,
 } from "lucide-react";
+import { themeStyles } from "@/lib/themes";
 import {
   Dialog,
   DialogContent,
@@ -37,8 +31,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+
+const QUICK_ACTIONS = [3, 5, 7, 10] as const;
 
 export default function RaffleDetailsPage() {
   const { id } = useParams();
@@ -52,139 +47,12 @@ export default function RaffleDetailsPage() {
 
   const raffle = state.raffles.find((r) => r.id === id);
 
-  // Advanced Visual Themes
-  const themeStyles = {
-    default: {
-      bg: "bg-slate-950",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black",
-      card: "bg-slate-900/60 backdrop-blur-xl border-slate-800 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
-      textPrimary: "text-white",
-      textSecondary: "text-slate-400",
-      ticketDefault:
-        "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700",
-      accent: "text-indigo-400",
-      Icon: Sparkles,
-      iconColor: "text-indigo-500/5",
-    },
-    football: {
-      bg: "bg-emerald-950",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900 via-emerald-950 to-black",
-      card: "bg-emerald-900/40 backdrop-blur-xl border-emerald-800/50 shadow-[0_8px_32px_rgba(5,150,105,0.15)]",
-      textPrimary: "text-emerald-50",
-      textSecondary: "text-emerald-200/70",
-      ticketDefault:
-        "bg-emerald-800/50 text-emerald-100 hover:bg-emerald-600 hover:text-white border border-emerald-700 shadow-sm",
-      accent: "text-emerald-400",
-      Icon: Trophy,
-      iconColor: "text-emerald-500/5",
-    },
-    baby: {
-      bg: "bg-rose-50",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-rose-100 via-pink-50 to-white",
-      card: "bg-white/60 backdrop-blur-xl border-pink-100 shadow-[0_8px_32px_rgba(244,114,182,0.15)]",
-      textPrimary: "text-rose-950",
-      textSecondary: "text-rose-700/80",
-      ticketDefault:
-        "bg-white text-rose-600 hover:bg-rose-100 hover:text-rose-700 border border-rose-200 shadow-sm",
-      accent: "text-rose-600",
-      Icon: HeartHandshake,
-      iconColor: "text-rose-500/5",
-    },
-    money: {
-      bg: "bg-amber-50",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-100 via-yellow-50 to-white",
-      card: "bg-white/60 backdrop-blur-xl border-amber-200/50 shadow-[0_8px_32px_rgba(245,158,11,0.1)]",
-      textPrimary: "text-amber-950",
-      textSecondary: "text-amber-700/80",
-      ticketDefault:
-        "bg-white text-amber-700 hover:bg-amber-100 hover:text-amber-900 border border-amber-200 shadow-sm",
-      accent: "text-amber-600",
-      Icon: Banknote,
-      iconColor: "text-amber-500/5",
-    },
-    party: {
-      bg: "bg-fuchsia-950",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-fuchsia-900 via-purple-950 to-black",
-      card: "bg-fuchsia-900/40 backdrop-blur-xl border-fuchsia-800/50 shadow-[0_8px_32px_rgba(192,38,211,0.15)]",
-      textPrimary: "text-fuchsia-50",
-      textSecondary: "text-fuchsia-200/70",
-      ticketDefault:
-        "bg-fuchsia-800/50 text-fuchsia-100 hover:bg-fuchsia-600 hover:text-white border border-fuchsia-700 shadow-sm",
-      accent: "text-fuchsia-400",
-      Icon: PartyPopper,
-      iconColor: "text-fuchsia-500/5",
-    },
-    wedding: {
-      bg: "bg-stone-50",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-stone-100 via-stone-50 to-white",
-      card: "bg-white/60 backdrop-blur-xl border-stone-200 shadow-[0_8px_32px_rgba(120,113,108,0.1)]",
-      textPrimary: "text-stone-900",
-      textSecondary: "text-stone-500",
-      ticketDefault:
-        "bg-white text-stone-600 hover:bg-stone-100/50 hover:text-stone-900 border border-stone-200 shadow-sm",
-      accent: "text-orange-400",
-      Icon: Gem,
-      iconColor: "text-orange-500/5",
-    },
-    birthday: {
-      bg: "bg-yellow-50",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-100 via-amber-50 to-white",
-      card: "bg-white/60 backdrop-blur-xl border-yellow-200 shadow-[0_8px_32px_rgba(234,179,8,0.1)]",
-      textPrimary: "text-yellow-950",
-      textSecondary: "text-yellow-700/80",
-      ticketDefault:
-        "bg-white text-yellow-700 hover:bg-yellow-100 hover:text-yellow-900 border border-yellow-200 shadow-sm",
-      accent: "text-yellow-500",
-      Icon: Cake,
-      iconColor: "text-yellow-500/5",
-    },
-    carnival: {
-      bg: "bg-violet-950",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-violet-900 via-fuchsia-950 to-rose-950",
-      card: "bg-white/10 backdrop-blur-xl border-rose-500/20 shadow-[0_8px_32px_rgba(244,63,94,0.15)]",
-      textPrimary: "text-white",
-      textSecondary: "text-rose-200/70",
-      ticketDefault:
-        "bg-white/5 text-rose-100 hover:bg-rose-600 hover:text-white border border-rose-500/30 shadow-sm",
-      accent: "text-rose-400",
-      Icon: Music,
-      iconColor: "text-rose-500/5",
-    },
-    christmas: {
-      bg: "bg-red-950",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-900 via-red-950 to-emerald-950",
-      card: "bg-black/20 backdrop-blur-xl border-red-800/50 shadow-[0_8px_32px_rgba(220,38,38,0.15)]",
-      textPrimary: "text-red-50",
-      textSecondary: "text-red-200/70",
-      ticketDefault:
-        "bg-red-900/30 text-red-100 hover:bg-red-600 hover:text-white border border-red-800 border-opacity-50 shadow-sm",
-      accent: "text-emerald-400",
-      Icon: Gift,
-      iconColor: "text-red-500/5",
-    },
-    beach: {
-      bg: "bg-cyan-50",
-      gradient:
-        "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-100 via-sky-50 to-white",
-      card: "bg-white/60 backdrop-blur-xl border-cyan-100 shadow-[0_8px_32px_rgba(6,182,212,0.1)]",
-      textPrimary: "text-cyan-950",
-      textSecondary: "text-cyan-700/80",
-      ticketDefault:
-        "bg-white text-cyan-600 hover:bg-cyan-100/50 hover:text-cyan-800 border border-cyan-200 shadow-sm",
-      accent: "text-sky-500",
-      Icon: Palmtree,
-      iconColor: "text-cyan-500/5",
-    },
-  };
+  const availableTickets = useMemo(() => {
+    if (!raffle) return [];
+    return Array.from({ length: raffle.totalTickets }, (_, i) => i + 1).filter(
+      (n) => !raffle.soldTickets.includes(n) && !selectedTickets.includes(n),
+    );
+  }, [raffle, selectedTickets]);
 
   const ticketGrid = useMemo(() => {
     if (!raffle) return [];
@@ -213,6 +81,50 @@ export default function RaffleDetailsPage() {
     );
   };
 
+  const handleQuickAdd = useCallback(
+    (qty: number) => {
+      if (availableTickets.length === 0) {
+        toast({
+          title: "Sem bilhetes disponíveis",
+          description: "Todos os bilhetes já foram vendidos ou selecionados.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const canAdd = Math.min(qty, availableTickets.length);
+      const shuffled = [...availableTickets].sort(() => Math.random() - 0.5);
+      const toAdd = shuffled.slice(0, canAdd);
+
+      setSelectedTickets((prev) => [...prev, ...toAdd]);
+
+      if (canAdd < qty) {
+        toast({
+          title: `${canAdd} bilhete(s) adicionado(s)`,
+          description: `Só havia ${canAdd} disponível(is).`,
+        });
+      }
+    },
+    [availableTickets, toast],
+  );
+
+  const handleClearSelection = () => {
+    setSelectedTickets([]);
+  };
+
+  const handleLucky = useCallback(() => {
+    if (availableTickets.length === 0) return;
+    const random =
+      availableTickets[Math.floor(Math.random() * availableTickets.length)];
+    setSelectedTickets((prev) =>
+      prev.includes(random) ? prev : [...prev, random],
+    );
+    toast({
+      title: "🍀 Número da sorte adicionado!",
+      description: `Bilhete #${random} foi selecionado.`,
+    });
+  }, [availableTickets, toast]);
+
   const confirmPurchase = async () => {
     if (selectedTickets.length === 0) return;
     setIsBuying(true);
@@ -240,19 +152,21 @@ export default function RaffleDetailsPage() {
     : themeStyles.default;
   const BackgroundIcon = currentTheme.Icon;
 
+  const availableCount = raffle.totalTickets - raffle.soldTickets.length;
+  const soldPercent = Math.round(
+    (raffle.soldTickets.length / raffle.totalTickets) * 100,
+  );
+
   return (
     <div
       className={`min-h-[100dvh] relative overflow-hidden ${currentTheme.bg} ${currentTheme.gradient}`}
     >
-      {/* Constellation Decorative Background Icons */}
+      {/* Ícones decorativos de fundo */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Central Giant Icon */}
         <BackgroundIcon
           className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] sm:w-[1200px] sm:h-[1200px] ${currentTheme.iconColor} -rotate-12 transform-gpu`}
           strokeWidth={0.5}
         />
-
-        {/* Floating background particles */}
         <BackgroundIcon
           className={`absolute top-[10%] left-[5%] w-32 h-32 ${currentTheme.iconColor} rotate-[15deg] opacity-50 hidden sm:block`}
           strokeWidth={1}
@@ -271,7 +185,7 @@ export default function RaffleDetailsPage() {
         />
       </div>
 
-      <div className="container mx-auto p-4 md:p-8 max-w-6xl space-y-8 relative z-10">
+      <div className="container mx-auto p-4 md:p-8 max-w-6xl space-y-8 relative z-10 pb-40">
         <Button
           variant="outline"
           onClick={() => router.back()}
@@ -281,7 +195,7 @@ export default function RaffleDetailsPage() {
         </Button>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Raffle Info */}
+          {/* Informações da Rifa */}
           <div className="lg:col-span-1 space-y-6">
             <Card
               className={`sticky top-8 ${currentTheme.card} transition-all duration-300`}
@@ -327,8 +241,7 @@ export default function RaffleDetailsPage() {
                     Bilhetes Disponíveis
                   </span>
                   <span className={`font-bold ${currentTheme.textPrimary}`}>
-                    {raffle.totalTickets - raffle.soldTickets.length} /{" "}
-                    {raffle.totalTickets}
+                    {availableCount} / {raffle.totalTickets}
                   </span>
                 </div>
                 <div className="pt-2">
@@ -356,10 +269,7 @@ export default function RaffleDetailsPage() {
                   <p
                     className={`text-xs text-center mt-3 font-medium ${currentTheme.textSecondary}`}
                   >
-                    {Math.round(
-                      (raffle.soldTickets.length / raffle.totalTickets) * 100,
-                    )}
-                    % dos bilhetes vendidos
+                    {soldPercent}% dos bilhetes vendidos
                   </p>
                 </div>
               </CardContent>
@@ -387,7 +297,7 @@ export default function RaffleDetailsPage() {
             </Card>
           </div>
 
-          {/* Ticket Grid */}
+          {/* Grade de Bilhetes */}
           <div className="lg:col-span-2">
             <Card className="h-full border-none shadow-none bg-transparent">
               <CardHeader className="px-0 sm:px-6">
@@ -399,10 +309,100 @@ export default function RaffleDetailsPage() {
                 <CardDescription
                   className={`text-base font-medium ${currentTheme.textSecondary}`}
                 >
-                  Selecione quantos bilhetes quiser abaixo.
+                  Selecione manualmente ou use as seleções rápidas abaixo.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="px-0 sm:px-6">
+
+              <CardContent className="px-0 sm:px-6 space-y-5">
+                {/* Quick Actions */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`text-sm font-semibold mr-1 flex items-center gap-1.5 ${currentTheme.textSecondary}`}
+                  >
+                    <Zap className="h-4 w-4" />
+                    Seleção Rápida:
+                  </span>
+
+                  {QUICK_ACTIONS.map((qty) => {
+                    const canAdd = Math.min(qty, availableTickets.length);
+                    const disabled = availableTickets.length === 0;
+                    return (
+                      <button
+                        key={qty}
+                        onClick={() => handleQuickAdd(qty)}
+                        disabled={disabled}
+                        className={`
+                          px-3 py-1.5 rounded-lg text-sm font-bold border transition-all duration-200
+                          ${
+                            disabled
+                              ? "opacity-30 cursor-not-allowed border-white/10 text-white/30"
+                              : "cursor-pointer hover:scale-105 active:scale-95 border-primary/40 bg-primary/15 text-primary hover:bg-primary/25 hover:border-primary/70 shadow-sm hover:shadow-[0_0_12px_rgba(139,92,246,0.3)]"
+                          }
+                        `}
+                        title={
+                          canAdd < qty
+                            ? `Apenas ${canAdd} disponíveis`
+                            : `Adicionar ${qty} bilhetes aleatórios`
+                        }
+                      >
+                        +{qty}
+                      </button>
+                    );
+                  })}
+
+                  {/* Botão sorte */}
+                  <button
+                    onClick={handleLucky}
+                    disabled={availableTickets.length === 0}
+                    className={`
+                      px-3 py-1.5 rounded-lg text-sm font-bold border transition-all duration-200 flex items-center gap-1.5
+                      ${
+                        availableTickets.length === 0
+                          ? "opacity-30 cursor-not-allowed border-white/10 text-white/30"
+                          : "cursor-pointer hover:scale-105 active:scale-95 border-amber-400/40 bg-amber-400/10 text-amber-400 hover:bg-amber-400/20 hover:border-amber-400/70 shadow-sm"
+                      }
+                    `}
+                    title="Adicionar um número aleatório da sorte"
+                  >
+                    <Shuffle className="h-3.5 w-3.5" />
+                    Sortear 1
+                  </button>
+
+                  {/* Limpar seleção */}
+                  {selectedTickets.length > 0 && (
+                    <button
+                      onClick={handleClearSelection}
+                      className="ml-auto px-3 py-1.5 rounded-lg text-sm font-bold border border-red-400/30 bg-red-400/10 text-red-400 hover:bg-red-400/20 hover:border-red-400/60 transition-all duration-200 flex items-center gap-1.5 cursor-pointer hover:scale-105 active:scale-95"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Limpar ({selectedTickets.length})
+                    </button>
+                  )}
+                </div>
+
+                {/* Legenda */}
+                <div className="flex items-center gap-4 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3.5 h-3.5 rounded-sm bg-primary shadow-[0_0_8px_rgba(139,92,246,0.5)]" />
+                    <span className={currentTheme.textSecondary}>
+                      Selecionado
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div
+                      className={`w-3.5 h-3.5 rounded-sm ${currentTheme.ticketDefault.split(" ").slice(0, 1).join(" ")} border border-white/20`}
+                    />
+                    <span className={currentTheme.textSecondary}>
+                      Disponível
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3.5 h-3.5 rounded-sm bg-black/15 border border-transparent" />
+                    <span className={currentTheme.textSecondary}>Vendido</span>
+                  </div>
+                </div>
+
+                {/* Grid de Bilhetes */}
                 <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-8 lg:grid-cols-10 gap-2 sm:gap-3">
                   {ticketGrid.map((number) => {
                     const isSold = raffle.soldTickets.includes(number);
@@ -414,18 +414,19 @@ export default function RaffleDetailsPage() {
                         disabled={isSold}
                         onClick={() => handleTicketClick(number)}
                         className={`
-                          aspect-square rounded-xl sm:rounded-2xl flex items-center justify-center text-sm sm:text-base font-bold transition-all duration-300 transform focus:outline-none z-10
+                          aspect-square rounded-xl sm:rounded-2xl flex items-center justify-center text-sm sm:text-base font-bold transition-all duration-200 transform focus:outline-none z-10
                           ${
                             isSold
                               ? "bg-black/10 dark:bg-white/5 text-foreground/30 cursor-not-allowed border border-transparent shadow-inner"
                               : isSelected
                                 ? "bg-primary text-primary-foreground scale-110 shadow-[0_0_20px_rgba(139,92,246,0.6)] ring-2 ring-primary ring-offset-2 ring-offset-background -translate-y-1"
-                                : `cursor-pointer hover:-translate-y-1 hover:shadow-lg ${currentTheme.ticketDefault}`
+                                : `cursor-pointer hover:-translate-y-1 hover:shadow-lg active:scale-95 ${currentTheme.ticketDefault}`
                           }
                         `}
-                        aria-label={`Bilhete número ${number}`}
+                        aria-label={`Bilhete número ${number}${isSold ? " (vendido)" : isSelected ? " (selecionado)" : ""}`}
+                        aria-pressed={isSelected}
                       >
-                        {number}
+                        {isSelected ? <Check className="h-4 w-4" /> : number}
                       </button>
                     );
                   })}
@@ -436,13 +437,13 @@ export default function RaffleDetailsPage() {
         </div>
       </div>
 
-      {/* Purchase Panel Summary */}
+      {/* Painel de Compra Fixo */}
       {selectedTickets.length > 0 && !purchaseSuccess && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur border-t shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50 animate-in slide-in-from-bottom-5">
           <div className="container mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex-1 flex flex-col sm:flex-row items-center gap-4">
+            <div className="flex-1 flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
               <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-bold tabular-nums">
                   {selectedTickets.length}
                 </span>
                 <span className="text-sm font-medium">
@@ -451,18 +452,24 @@ export default function RaffleDetailsPage() {
               </div>
               <div className="hidden sm:block h-6 w-px bg-border" />
               <div className="text-xs text-muted-foreground max-w-[200px] truncate">
-                Nº: {selectedTickets.sort((a, b) => a - b).join(", ")}
+                Nº: {[...selectedTickets].sort((a, b) => a - b).join(", ")}
               </div>
             </div>
-            <div className="flex items-center gap-6 w-full sm:w-auto mt-2 sm:mt-0">
+            <div className="flex items-center gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+              {/* Botão limpar inline no painel */}
+              <button
+                onClick={handleClearSelection}
+                className="p-2 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                title="Limpar seleção"
+              >
+                <X className="h-4 w-4" />
+              </button>
               <div className="flex flex-col items-end">
                 <span className="text-xs text-muted-foreground">Total:</span>
-                <span className="text-2xl font-bold text-green-600">
+                <span className="text-2xl font-bold text-green-600 tabular-nums">
                   R$ {(raffle.ticketPrice * selectedTickets.length).toFixed(2)}
                 </span>
               </div>
-
-              {/* Remove nested Dialog from fixed Summary logic and use simple Button hook */}
               <Button
                 size="lg"
                 onClick={() => setIsDialogOpen(true)}
@@ -475,7 +482,7 @@ export default function RaffleDetailsPage() {
         </div>
       )}
 
-      {/* Actual Dialog for confirmation */}
+      {/* Modal de Confirmação */}
       <Dialog
         open={isDialogOpen}
         onOpenChange={(open) => !open && handleCloseDialog()}
@@ -495,10 +502,27 @@ export default function RaffleDetailsPage() {
             <div className="py-4 space-y-4">
               <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg border">
                 <span className="text-sm font-medium">Total a Pagar:</span>
-                <span className="text-2xl font-bold text-green-500">
+                <span className="text-2xl font-bold text-green-500 tabular-nums">
                   R$ {(raffle.ticketPrice * selectedTickets.length).toFixed(2)}
                 </span>
               </div>
+
+              {/* Lista dos bilhetes selecionados no modal */}
+              {selectedTickets.length <= 20 && (
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
+                  {[...selectedTickets]
+                    .sort((a, b) => a - b)
+                    .map((n) => (
+                      <span
+                        key={n}
+                        className="text-xs font-bold px-2 py-1 rounded-md bg-primary/15 text-primary border border-primary/30"
+                      >
+                        #{n}
+                      </span>
+                    ))}
+                </div>
+              )}
+
               <p className="text-xs text-muted-foreground text-center">
                 Ao confirmar, o valor será debitado do seu saldo simulado.
               </p>

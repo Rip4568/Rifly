@@ -40,3 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 *lock.json
+
+# logs e arquivos temporários locais
+build-error.log
+pnpm_start.log
+*.log
+
+# pasta de verificação local
+/verification/

@@ -4,53 +4,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, Trophy, Shield, Zap } from "lucide-react";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
-
-// Helper components for Creative UI
-const MagneticButton = ({ children, className, ...props }: any) => {
-  const ref = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      el.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-    };
-
-    const handleMouseLeave = () => {
-      el.style.transform = "translate(0, 0)";
-    };
-
-    el.addEventListener("mousemove", handleMouseMove);
-    el.addEventListener("mouseleave", handleMouseLeave);
-    return () => {
-      el.removeEventListener("mousemove", handleMouseMove);
-      el.removeEventListener("mouseleave", handleMouseLeave);
-    };
-  }, []);
-
-  return (
-    <Button ref={ref} className={`magnetic ${className}`} {...props}>
-      {children}
-    </Button>
-  );
-};
-
-const FadeIn = ({ children, delay = 0, y = 20, className = "" }: any) => (
-  <motion.div
-    initial={{ opacity: 0, y }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-100px" }}
-    transition={{ duration: 0.6, delay, ease: [0.25, 1, 0.5, 1] }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
+import { MagneticButton } from "@/components/MagneticButton";
+import { FadeIn } from "@/components/FadeIn";
 
 export default function Home() {
   return (
