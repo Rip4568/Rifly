@@ -39,10 +39,8 @@ const raffleReducer = (state: UserState, action: RaffleAction): UserState => {
     case "BUY_TICKET":
       return {
         ...state,
-        // For simplicity, mark tickets as sold
         raffles: state.raffles.map((r) => {
           if (r.id === action.payload.raffleId) {
-            // Filter out tickets that are already sold to avoid duplicates, although UI shouldn't allow it
             const newCotas = action.payload.ticketNumbers.filter(
               (t) => !r.soldTickets.includes(t),
             );
@@ -51,6 +49,19 @@ const raffleReducer = (state: UserState, action: RaffleAction): UserState => {
           }
           return r;
         }),
+      };
+    case "CLOSE_RAFFLE":
+      return {
+        ...state,
+        raffles: state.raffles.map((r) =>
+          r.id === action.payload.raffleId
+            ? {
+                ...r,
+                winner: action.payload.winner,
+                closedAt: new Date().toISOString(),
+              }
+            : r,
+        ),
       };
     default:
       return state;
@@ -65,6 +76,7 @@ interface RaffleContextType {
   deleteRaffle: (id: string) => void;
   editRaffle: (raffle: Raffle) => void;
   buyTicket: (raffleId: string, ticketNumbers: number[]) => void;
+  closeRaffle: (raffleId: string, winner: number) => void;
 }
 
 const RaffleContext = createContext<RaffleContextType | undefined>(undefined);
@@ -116,6 +128,10 @@ export const RaffleProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "BUY_TICKET", payload: { raffleId, ticketNumbers } });
   };
 
+  const closeRaffle = (raffleId: string, winner: number) => {
+    dispatch({ type: "CLOSE_RAFFLE", payload: { raffleId, winner } });
+  };
+
   return (
     <RaffleContext.Provider
       value={{
@@ -124,6 +140,7 @@ export const RaffleProvider = ({ children }: { children: ReactNode }) => {
         deleteRaffle,
         editRaffle,
         buyTicket,
+        closeRaffle,
       }}
     >
       {children}

@@ -19,6 +19,8 @@ export interface Raffle {
   totalTickets: number;
   soldTickets: number[];
   createdAt: string;
+  winner?: number;
+  closedAt?: string;
 }
 
 export interface UserState {
@@ -33,4 +35,5 @@ export type RaffleAction =
   | {
       type: "BUY_TICKET";
       payload: { raffleId: string; ticketNumbers: number[] };
-    };
+    }
+  | { type: "CLOSE_RAFFLE"; payload: { raffleId: string; winner: number } };
